@@ -1,0 +1,18 @@
+name: "Update Eik alias"
+description: "Updates your eik package alias with the new version"
+branding:
+  icon: activity
+  color: orange
+inputs:
+  alias:
+    description: "Version alias (defaults to current major version)"
+    required: false
+  version:
+    description: "Version to alias (defaults to current version in repo)"
+    required: false
+  eik-server-key:
+    description: "Your Eik server key for authentication"
+    required: true
+runs:
+  using: "node16"
+  main: "dist/index.cjs"
