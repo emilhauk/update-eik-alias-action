@@ -1626,9 +1626,13 @@ try {
   (0, import_assert.default)(eikConfig.server, "Found no asset server in config");
   import_core.default.info(`Updating alias (${alias}) to version (${version})`);
   const login = (0, import_child_process.execSync)(`npx @eik/cli login --server ${eikConfig.server} --key ${eikServerKey}`);
-  import_core.default.info(login.stdout);
+  if (login && login.stdout) {
+    import_core.default.info(login.stdout.toString());
+  }
   const updateAlias = (0, import_child_process.execSync)(`npx @eik/cli package-alias ${eikConfig.name} ${version} ${alias}`);
-  import_core.default.info(updateAlias.stdout);
+  if (updateAlias && updateAlias.stdout) {
+    import_core.default.info(updateAlias.stdout.toString());
+  }
 } catch (error) {
   if (error && error.stdout) {
     import_core.default.info(error.stdout.toString());
