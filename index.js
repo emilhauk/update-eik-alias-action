@@ -38,7 +38,7 @@ try {
     core.info(login.stdout.toString())
   }
 
-  const updateAlias = execSync(`npx @eik/cli package-alias ${eikConfig.name} ${version} ${alias}`)
+  const updateAlias = execSync(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias}`)
   if (updateAlias && updateAlias.stdout) {
     core.info(updateAlias.stdout.toString())
   }
