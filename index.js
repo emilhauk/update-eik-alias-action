@@ -1,4 +1,6 @@
 import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { execSync } from 'child_process'
 import core from '@actions/core'
 import assert from 'assert'
@@ -38,7 +40,14 @@ try {
     core.info(login.stdout.toString())
   }
 
-  const updateAlias = execSync(`npx @eik/cli package-alias ${eikConfig.name} ${version} ${alias}`)
+  const eikrcPath = path.join(os.homedir(), '.eikrc')
+  const eikrc = JSON.parse(fs.readFileSync(eikrcPath, {encoding: 'utf-8'}))
+  const token = new Map(eikrc.tokens).get(eikConfig.server)
+  assert(token, `No token found in ${eikrcPath} for server ${eikConfig.server}`)
+  core.setSecret(token)
+
+  const type = eikConfig.type || 'package'
+  const updateAlias = execSync(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias} --server ${eikConfig.server} --token ${token} --type ${type}`)
   if (updateAlias && updateAlias.stdout) {
     core.info(updateAlias.stdout.toString())
   }
