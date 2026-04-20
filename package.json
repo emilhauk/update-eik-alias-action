@@ -1,7 +1,7 @@
 {
   "name": "update-eik-alias-action",
   "version": "1.0.0",
-  "description": "Update Eik alias actrion",
+  "description": "Update Eik alias action",
   "type": "module",
   "exports": {
     "default": "./index.js"
