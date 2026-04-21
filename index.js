@@ -7,10 +7,12 @@ import assert from 'assert'
 const SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
 function getEikConfig() {
-  if (fs.existsSync('./eik.json')) {
-    return JSON.parse(fs.readFileSync('./eik.json', {encoding: 'utf-8'}))
+  const packageDir = core.getInput('package-directory') || '.';
+
+  if (fs.existsSync(`${packageDir}/eik.json`)) {
+    return JSON.parse(fs.readFileSync(`${packageDir}/eik.json`, {encoding: 'utf-8'}))
   }
-  const pkg = JSON.parse(fs.readFileSync('./package.json', {encoding: 'utf-8'}))
+  const pkg = JSON.parse(fs.readFileSync(`${packageDir}/package.json`, {encoding: 'utf-8'}))
   return {
     name: pkg.name,
     version: pkg.version,
