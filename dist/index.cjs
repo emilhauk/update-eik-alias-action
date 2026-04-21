@@ -2163,10 +2163,11 @@ var import_core = __toESM(require_core(), 1);
 var import_assert = __toESM(require("assert"), 1);
 var SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
 function getEikConfig() {
-  if (import_fs.default.existsSync("./eik.json")) {
-    return JSON.parse(import_fs.default.readFileSync("./eik.json", { encoding: "utf-8" }));
+  const packageDir = import_core.default.getInput("package-directory") || ".";
+  if (import_fs.default.existsSync(`${packageDir}/eik.json`)) {
+    return JSON.parse(import_fs.default.readFileSync(`${packageDir}/eik.json`, { encoding: "utf-8" }));
   }
-  const pkg = JSON.parse(import_fs.default.readFileSync("./package.json", { encoding: "utf-8" }));
+  const pkg = JSON.parse(import_fs.default.readFileSync(`${packageDir}/package.json`, { encoding: "utf-8" }));
   return {
     name: pkg.name,
     version: pkg.version,

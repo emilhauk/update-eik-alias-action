@@ -13,6 +13,9 @@ inputs:
   eik-server-key:
     description: "Your Eik server key for authentication"
     required: true
+  package-directory:
+    description: "The directory in which the package to alias is. Defaults to root directory."
+    required: false
 runs:
   using: "node24"
   main: "dist/index.cjs"
