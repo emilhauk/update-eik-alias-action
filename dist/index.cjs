@@ -2162,8 +2162,7 @@ var import_child_process = require("child_process");
 var import_core = __toESM(require_core(), 1);
 var import_assert = __toESM(require("assert"), 1);
 var SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
-function getEikConfig() {
-  const packageDir = import_core.default.getInput("package-directory") || ".";
+function getEikConfig(packageDir) {
   if (import_fs.default.existsSync(`${packageDir}/eik.json`)) {
     return JSON.parse(import_fs.default.readFileSync(`${packageDir}/eik.json`, { encoding: "utf-8" }));
   }
@@ -2175,7 +2174,8 @@ function getEikConfig() {
   };
 }
 try {
-  const eikConfig = getEikConfig();
+  const packageDir = import_core.default.getInput("package-directory") || ".";
+  const eikConfig = getEikConfig(packageDir);
   const version = import_core.default.getInput("version") || eikConfig.version;
   (0, import_assert.default)(SEMVER_REGEX.test(version), `Expecting version to be a semver (https://semver.org/), was (${version})`);
   const alias = import_core.default.getInput("alias") || version.split(".")[0];
@@ -2184,11 +2184,15 @@ try {
   import_core.default.setSecret(eikServerKey);
   (0, import_assert.default)(eikConfig.server, "Found no asset server in config");
   import_core.default.info(`Updating alias (${alias}) to version (${version})`);
-  const login = (0, import_child_process.execSync)(`npx @eik/cli login --server ${eikConfig.server} --key ${eikServerKey}`);
+  const login = (0, import_child_process.execSync)(`npx @eik/cli login --server ${eikConfig.server} --key ${eikServerKey}`, {
+    cwd: packageDir
+  });
   if (login && login.stdout) {
     import_core.default.info(login.stdout.toString());
   }
-  const updateAlias = (0, import_child_process.execSync)(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias}`);
+  const updateAlias = (0, import_child_process.execSync)(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias}`, {
+    cwd: packageDir
+  });
   if (updateAlias && updateAlias.stdout) {
     import_core.default.info(updateAlias.stdout.toString());
   }
