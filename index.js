@@ -6,9 +6,7 @@ import assert from 'assert'
 // https://ihateregex.io/expr/semver/
 const SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
-function getEikConfig() {
-  const packageDir = core.getInput('package-directory') || '.';
-
+function getEikConfig(packageDir) {
   if (fs.existsSync(`${packageDir}/eik.json`)) {
     return JSON.parse(fs.readFileSync(`${packageDir}/eik.json`, {encoding: 'utf-8'}))
   }
@@ -21,7 +19,8 @@ function getEikConfig() {
 }
 
 try {
-  const eikConfig = getEikConfig();
+  const packageDir = core.getInput('package-directory') || '.';
+  const eikConfig = getEikConfig(packageDir);
 
   const version = core.getInput('version') || eikConfig.version
   assert(SEMVER_REGEX.test(version), `Expecting version to be a semver (https://semver.org/), was (${version})`)
@@ -35,12 +34,16 @@ try {
   assert(eikConfig.server, 'Found no asset server in config')
 
   core.info(`Updating alias (${alias}) to version (${version})`)
-  const login = execSync(`npx @eik/cli login --server ${eikConfig.server} --key ${eikServerKey}`)
+  const login = execSync(`npx @eik/cli login --server ${eikConfig.server} --key ${eikServerKey}`, {
+    cwd: packageDir
+  })
   if (login && login.stdout) {
     core.info(login.stdout.toString())
   }
 
-  const updateAlias = execSync(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias}`)
+  const updateAlias = execSync(`npx @eik/cli alias ${eikConfig.name} ${version} ${alias}`, {
+    cwd: packageDir
+  })
   if (updateAlias && updateAlias.stdout) {
     core.info(updateAlias.stdout.toString())
   }
